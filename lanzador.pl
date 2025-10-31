@@ -12,9 +12,9 @@ $Path = `pwd`;
 chomp($Path);
 
 $Nombre_Ejecutable = "MM_ejecutable";
-@Size_Matriz = ("2","10","20");
-@Num_Hilos = (1,2,4,8,16,20);
-$Repeticiones = 4;
+@Size_Matriz = ("1000","2000","4000");
+@Num_Hilos = (1,2,4,8,16);
+$Repeticiones = 30;
 
 foreach $size (@Size_Matriz){
 	foreach $hilo (@Num_Hilos) {
