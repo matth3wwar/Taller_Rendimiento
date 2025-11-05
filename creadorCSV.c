@@ -29,87 +29,98 @@ const int EXPECTED = 30;     // columnas Iter1..Iter30
 const int MAX_READ = 1000;   // to avoid reading insane amount; we'll cap to EXPECTED anyway
 
 int main(int argc, char *argv[]) {
-    const char *dir = ".";
-    const char *outname = "merged.csv";
-    if (argc >= 2) dir = argv[1];
-    if (argc >= 3) outname = argv[2];
+	const char *process = "mmClasicaFork";
+	const char *dir = ".";
+	const char *outname = "merged.csv";
 
-    FILE *out = fopen(outname, "w");
-    if (!out) {
-        fprintf(stderr, "Error: no se pudo crear '%s': %s\n", outname, strerror(errno));
-        return 1;
-    }
+	if (argc >= 2) process = argv[1];
+    	if (argc >= 3) dir = argv[2];
+	if (argc >= 4) outname = argv[3];
 
-    // Cabecera
-    fprintf(out, "Configuracion");
-    for (int c = 1; c <= EXPECTED; ++c) fprintf(out, ",Iter%d", c);
-    fprintf(out, "\n");
+	FILE *out = fopen(outname, "w");
+	if (!out) {
+		fprintf(stderr, "Error: no se pudo crear '%s': %s\n", outname, strerror(errno));
+		return 1;
+	}
+	//Header
+	fprintf(out, "Configuracion");
+	for (int c = 1; c <= EXPECTED; ++c) fprintf(out, ",Iter%d", c);
+	fprintf(out, "\n");
 
-    char filename[4096];
-    char filepath[8192];
-    for (int i = 0; i < N_ITERS; ++i) {
-        for (int j = 0; j < N_THREADS; ++j) {
-            int iter = ITERS[i];
-            int th = THREADS[j];
+	char filename[4096];
+	char filepath[8192];
+	for (int i = 0; i < N_ITERS; ++i) {
+		for (int j = 0; j < N_THREADS; ++j) {
+			int iter = ITERS[i];
+			int th = THREADS[j];
 
-            // construir nombre y ruta
-            snprintf(filename, sizeof(filename), "mmClasicaFork-%d-Hilos-%d.dat", iter, th);
-            int n = snprintf(filepath, sizeof(filepath), "%s/%s", dir, filename);
-            if (n >= (int)sizeof(filepath)) {
-                fprintf(stderr, "Ruta demasiado larga para %s/%s, se omite.\n", dir, filename);
-                // aun así escribir fila vacía para mantener el orden
-                fprintf(out, "%d-%d", iter, th);
-                for (int c = 0; c < EXPECTED; ++c) fprintf(out, ",");
-                fprintf(out, "\n");
-                continue;
-            }
+           		// construir nombre y ruta
+			snprintf(filename, sizeof(filename), "%s-%d-Hilos-%d.dat", process, iter, th);
+			int n = snprintf(filepath, sizeof(filepath), "%s/%s", dir, filename);
 
-            FILE *f = fopen(filepath, "r");
-            double values[EXPECTED];
-            int count = 0;
+			if (n >= (int)sizeof(filepath)) {
 
-            if (!f) {
-                // archivo no existe o no se puede abrir
-                fprintf(stderr, "Aviso: no se encontró/abrir '%s' (%s). Se dejarán campos vacíos.\n", filepath, strerror(errno));
-            } else {
-                // leer hasta EXPECTED valores
-                while (count < MAX_READ) {
-                    double v;
-                    if (fscanf(f, "%lf", &v) != 1) break;
-                    if (count < EXPECTED) values[count] = v;
-                    count++;
-                    if (count >= EXPECTED) {
-                        // aún seguimos contando en case haya más de EXPECTED, pero no almacenamos
-                        // solo rompemos porque no necesitamos más
-                        break;
-                    }
-                }
-                if (count == 0) {
-                    fprintf(stderr, "Aviso: archivo '%s' no contiene valores numéricos.\n", filepath);
-                } else if (count < EXPECTED) {
-                    fprintf(stderr, "Aviso: '%s' tiene %d valores (esperado %d). Se completará con campos vacíos.\n", filepath, count, EXPECTED);
-                }
-                fclose(f);
-            }
+				fprintf(stderr, "Ruta demasiado larga para %s/%s, se omite.\n", dir, filename);
 
-            // escribir fila: Configuracion, then up to EXPECTED values (or blanks)
-            fprintf(out, "%d-%d", iter, th);
-            for (int c = 0; c < EXPECTED; ++c) {
-                if (f && c < count && count > 0 && c < EXPECTED) {
-                    // if file opened and we have value stored at c
-                    if (c < count) fprintf(out, ",%.10g", values[c]);
-                    else fprintf(out, ",");
-                } else {
-                    // either file missing or not enough values -> blank
-                    fprintf(out, ",");
-                }
-            }
-            fprintf(out, "\n");
-        }
-    }
+				// aun así escribir fila vacía para mantener el orden
+				fprintf(out, "%d-%d", iter, th);
 
-    fclose(out);
-    printf("CSV generado: %s\n", outname);
-    return 0;
+				for (int c = 0; c < EXPECTED; ++c)
+					fprintf(out, ",");
+
+				fprintf(out, "\n");
+				continue;
+			}
+
+			FILE *f = fopen(filepath, "r");
+			double values[EXPECTED];
+			int count = 0;
+
+			if (!f) {
+				//Archivo no existe o no se puede abrir
+				fprintf(stderr, "Aviso: no se encontró/abrir '%s' (%s). Se dejarán campos vacíos.\n", filepath, strerror(errno));
+			} else {
+				// leer hasta EXPECTED valores
+				while (count < MAX_READ) {
+					double v;
+					if (fscanf(f, "%lf", &v) != 1) break;
+					if (count < EXPECTED) values[count] = v;
+					count++;
+					if (count >= EXPECTED) {
+						// aún seguimos contando en case haya más de EXPECTED, pero no almacenamos
+						// solo rompemos porque no necesitamos más
+						break;
+					}
+				}
+				if (count == 0) {
+					fprintf(stderr, "Aviso: archivo '%s' no contiene valores numéricos.\n", filepath);
+				} else if (count < EXPECTED) {
+					fprintf(stderr, "Aviso: '%s' tiene %d valores (esperado %d). Se completará con campos vacíos.\n", filepath, count, EXPECTED);
+				}
+				fclose(f);
+			}
+			// escribir fila: Configuracion, then up to EXPECTED values (or blanks)
+			fprintf(out, "%d-%d", iter, th);
+			for (int c = 0; c < EXPECTED; ++c) {
+				if (f && c < count && count > 0 && c < EXPECTED) {
+					// if file opened and we have value stored at c
+					if (c < count)
+						fprintf(out, ",%.10g", values[c]);
+
+					else
+						fprintf(out, ",");
+				} else {
+					// either file missing or not enough values -> blank
+					fprintf(out, ",");
+				}
+			}
+
+			fprintf(out, "\n");
+		}
+	}
+
+	fclose(out);
+	printf("CSV generado: %s\n", outname);
+	return 0;
 }
 
