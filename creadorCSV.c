@@ -32,17 +32,26 @@ int main(int argc, char *argv[]) {
 	const char *process = "mmClasicaFork";
 	const char *dir = ".";
 	const char *outname = "merged.csv";
+	int convertToSeconds = 1;
 
-	if (argc >= 2) process = argv[1];
-    	if (argc >= 3) dir = argv[2];
-	if (argc >= 4) outname = argv[3];
-
+	for (int _i = 0; _i < argc; _i++) {
+		if (strcmp(argv[_i], "-c") == 0 || strcmp(argv[_i], "--convertToSeconds") == 0)
+			convertToSeconds = 1;
+		else {
+			if (_i == 1)
+				process = argv[1];
+		    	if (_i == 2)
+				dir = argv[2];
+			if (_i == 3)
+				outname = argv[3];
+		}
+	}
 	FILE *out = fopen(outname, "w");
 	if (!out) {
 		fprintf(stderr, "Error: no se pudo crear '%s': %s\n", outname, strerror(errno));
 		return 1;
 	}
-	//Header
+	/*Header*/
 	fprintf(out, "Configuracion");
 	for (int c = 1; c <= EXPECTED; ++c) fprintf(out, ",Iter%d", c);
 	fprintf(out, "\n");
@@ -54,7 +63,7 @@ int main(int argc, char *argv[]) {
 			int iter = ITERS[i];
 			int th = THREADS[j];
 
-           		// construir nombre y ruta
+           		/*construir nombre y ruta*/
 			snprintf(filename, sizeof(filename), "%s-%d-Hilos-%d.dat", process, iter, th);
 			int n = snprintf(filepath, sizeof(filepath), "%s/%s", dir, filename);
 
@@ -62,7 +71,7 @@ int main(int argc, char *argv[]) {
 
 				fprintf(stderr, "Ruta demasiado larga para %s/%s, se omite.\n", dir, filename);
 
-				// aun así escribir fila vacía para mantener el orden
+				/*Aun asi escribir fila vacía para mantener el orden*/
 				fprintf(out, "%d-%d", iter, th);
 
 				for (int c = 0; c < EXPECTED; ++c)
@@ -71,7 +80,7 @@ int main(int argc, char *argv[]) {
 				fprintf(out, "\n");
 				continue;
 			}
-
+			/*Abrir archivo en modo lectura*/
 			FILE *f = fopen(filepath, "r");
 			double values[EXPECTED];
 			int count = 0;
@@ -83,12 +92,20 @@ int main(int argc, char *argv[]) {
 				// leer hasta EXPECTED valores
 				while (count < MAX_READ) {
 					double v;
-					if (fscanf(f, "%lf", &v) != 1) break;
-					if (count < EXPECTED) values[count] = v;
+					if (fscanf(f, "%lf", &v) != 1)
+						break;
+					if (convertToSeconds)
+						v /= 1000000;
+					if (count < EXPECTED)
+						values[count] = v;
+
 					count++;
+
 					if (count >= EXPECTED) {
-						// aún seguimos contando en case haya más de EXPECTED, pero no almacenamos
-						// solo rompemos porque no necesitamos más
+						/****************************************************************
+						* Aun seguimos contando en case haya más de EXPECTED, pero no almacenamos
+						* solo rompemos porque no necesitamos más
+						****************************************************************/
 						break;
 					}
 				}
@@ -99,7 +116,7 @@ int main(int argc, char *argv[]) {
 				}
 				fclose(f);
 			}
-			// escribir fila: Configuracion, then up to EXPECTED values (or blanks)
+			/*escribir fila: Configuracion, then up to EXPECTED values (or blanks)*/
 			fprintf(out, "%d-%d", iter, th);
 			for (int c = 0; c < EXPECTED; ++c) {
 				if (f && c < count && count > 0 && c < EXPECTED) {
