@@ -12,8 +12,8 @@ $Path = `pwd`;
 chomp($Path);
 
 $Nombre_Ejecutable = "mmClasicaFork";
-@Size_Matriz = ("1000","2000");
-@Num_Hilos = (1,2,4,8,16);
+@Size_Matriz = ("1000");
+@Num_Hilos = (1);
 $Repeticiones = 30;
 
 foreach $size (@Size_Matriz){
