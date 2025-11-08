@@ -1,8 +1,7 @@
-#!/usr/bin/perl
 #**************************************************************
 #         		Pontificia Universidad Javeriana
-#     Autor: 
-#     Fecha: 
+#     Autor: Elier Ibarra
+#     Fecha: 01/11/2025
 #     Materia: Sistemas Operativos
 #     Tema: Taller de Evaluación de Rendimiento
 #     Fichero: script automatización ejecución por lotes 
@@ -11,7 +10,7 @@
 $Path = `pwd`;
 chomp($Path);
 
-$Nombre_Ejecutable = "mmClasicaFork";
+$Nombre_Ejecutable = "mmClasicaOpenMP";
 @Size_Matriz = ("1000","2000","4000");
 @Num_Hilos = (1,2,4,8,16);
 $Repeticiones = 30;
