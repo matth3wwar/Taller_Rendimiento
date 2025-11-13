@@ -13,5 +13,8 @@ mmClasicaFork:
 mmClasicaOpenMP:
 	$(GCC) $(CLFAGS) $@.c -o $@ $(FOPENMP)
 
+creadorCSV:
+	$(GCC) $(CLFAGS) $@.c -o $@ 
+
 clean:
 	$(RM) $(PROGRAMAS) 
