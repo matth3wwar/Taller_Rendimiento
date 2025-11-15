@@ -29,6 +29,23 @@ Esta carpeta contiene diferentes implementaciones de multiplicación de matrices
 - *Paralelización*: OpenMP
 - *Características*: Optimización mediante acceso a memoria más eficiente
 
+# Organización de las ramas
+
+El repositorio está organizado en una rama principal con los ejecutables base y una rama por cada computadora por la cual se hayan hecho las pruebas de rendimientos.
+
+Cada rama nombrada por el id de una de las computadoras utilizadas, contiene los archivos correspondientes a las ejecuciones en archivos con el formato:
+
+[ejecutable]-[dimension_matriz]-[hilos].dat
+
+En cada rama correspondiente a la prueba de una computadora, se tienen un archivo .csv con el recopilado final de los datos de esa computadora en segundos con el formato:
+
+DATOS_[computadora]_[ejecutable].csv
+
+Para correr el código de creadorCSV.c se utilizan los siguientes comandos:
+
+bash
+make creadorCSV
+./creadorCSV [ejecutable]_[dirección_salida]_[nombre_salida] 
 
 # Compilación y ejecución de mmClasicaFork
 
@@ -37,6 +54,7 @@ $Nombre_Ejecutable = "mmClasicaFork";
 
 # En consola:
 bash
+make mmClasicaFork
 chmod +x lanzador.pl
 ./lanzador.pl
 
@@ -47,6 +65,7 @@ $Nombre_Ejecutable = "mmClasicaPosix";
 
 bash
 # En consola:
+make mmClasicaPosix
 chmod +x lanzador.pl
 ./lanzador.pl
 
@@ -57,5 +76,6 @@ $Nombre_Ejecutable = "mmClasicaOpenMP";
 
 ```bash
 # En consola:
+make mmClasicaOpenMP
 chmod +x lanzador.pl
 ./lanzador.pl
