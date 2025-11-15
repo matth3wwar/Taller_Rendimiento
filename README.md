@@ -46,7 +46,7 @@ Para correr el código de creadorCSV.c se utilizan los siguientes comandos:
 ```bash
 #en consola:
 make creadorCSV
-./creadorCSV [ejecutable]_[dirección_salida]_[nombre_salida]
+./creadorCSV [ejecutable] [dirección_salida] [nombre_salida]
 ```
 
 # Compilación y ejecución de mmClasicaFork
