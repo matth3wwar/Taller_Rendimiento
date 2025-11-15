@@ -43,31 +43,35 @@ DATOS_[computadora]_[ejecutable].csv
 
 Para correr el código de creadorCSV.c se utilizan los siguientes comandos:
 
-bash
+```bash
+#en consola:
 make creadorCSV
-./creadorCSV [ejecutable]_[dirección_salida]_[nombre_salida] 
+./creadorCSV [ejecutable]_[dirección_salida]_[nombre_salida]
+```
 
 # Compilación y ejecución de mmClasicaFork
 
 # Editar lanzador.pl y cambiar:
 $Nombre_Ejecutable = "mmClasicaFork";
 
+```bash
 # En consola:
-bash
 make mmClasicaFork
 chmod +x lanzador.pl
 ./lanzador.pl
+```
 
 # Compilación y ejecución de mmClasicaPosix
 
 # Editar lanzador.pl y cambiar:
 $Nombre_Ejecutable = "mmClasicaPosix";
 
-bash
+```bash
 # En consola:
 make mmClasicaPosix
 chmod +x lanzador.pl
 ./lanzador.pl
+```
 
 #Compilación y ejecución de mmClasicaOpenMP
 
