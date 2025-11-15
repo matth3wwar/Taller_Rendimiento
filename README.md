@@ -58,5 +58,4 @@ $Nombre_Ejecutable = "mmClasicaOpenMP";
 ```bash
 # En consola:
 chmod +x lanzador.pl
-chmod +x mmClasicaOpenMP
 ./lanzador.pl
